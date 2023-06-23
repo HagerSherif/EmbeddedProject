@@ -25,7 +25,7 @@ unsigned long int nextBlinkTime;
 unsigned char  hazardLedState=0;
 void blinks_init(int blinks);
 
-//Use case
+//Use cases
 void closing_the_door();
 void opening_the_door();
 void locking_the_door();
