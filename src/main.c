@@ -27,9 +27,9 @@ void blinks_init(int blinks);
 
 //Use case
 void closing_the_door();
-void door_is_open();
+void opening_the_door();
 void locking_the_door();
-void door_unlock();
+void unlocking_the_door();
 void anti_theft_vehicle_lock();
 
 int main() {
@@ -50,7 +50,7 @@ int main() {
 		  locked=!locked;
 		  switch (locked){
 		  case 0:
-				door_unlock();
+				unlocking_the_door();
 				break;
 		  case 1:
 				locking_the_door();
@@ -65,7 +65,7 @@ int main() {
 		  closed=!closed;
 		  switch (closed){
 		  case 0:
-				door_is_open();
+				opening_the_door();
 				break;
 		  case 1:
 				closing_the_door();
@@ -122,7 +122,7 @@ void closing_the_door(){
 	ambLightDuration=1000;
 }
 
-void door_is_open(){
+void opening_the_door(){
  	GPIO_WritePinValue(ambient_Led,1);     // Ambient light ON
 }
 
@@ -133,7 +133,7 @@ void locking_the_door(){
 	blinks_init(4);
 }
 
-void door_unlock(){
+void unlocking_the_door(){
 	GPT_StartTimer(10000);    // start timer for anti theft
 	GPIO_WritePinValue(vehicle_Led,1);  //vehicle lock light ON
 	GPIO_WritePinValue(ambient_Led,1);    // Ambient light ON
