@@ -10,6 +10,8 @@
 #define    vehicle_Led      5
 #define    hazard_Led      10
 #define    ambient_Led      15
+#define    button1          0
+#define    button2          1
 
 //buttons states
 int current_state;
@@ -19,7 +21,7 @@ int previous_state2=1;
 
 int locked=1;
 int closed=1;
-int numberOfBlinks=0;
+int remainingBlinks=0;
 unsigned long int ambLightDuration=-1;
 unsigned long int nextBlinkTime;
 unsigned char  hazardLedState=0;
@@ -37,13 +39,13 @@ int main() {
 	Rcc_Enable(RCC_GPIOA);
 	Rcc_Enable(RCC_GPIOD);
 	Rcc_Enable(RCC_SYSCFG);
-    GPIO_Init();
+        GPIO_Init();
 	GPT_Init();
 
 	while (1) {
 
-		current_state= Gpio_ReadPin(0);     //state of Door Handle Button
-		current_state2= Gpio_ReadPin(1);    //state of Door Button
+		current_state= Gpio_ReadPin(button1);     //state of Door Handle Button
+		current_state2= Gpio_ReadPin(button2);    //state of Door Button
 
 		if ((previous_state ==1) &&(current_state==0) && closed){
 		  //if lock or unlock while door is closed
@@ -73,7 +75,7 @@ int main() {
 		  default:
 				 break;
 		}
-		  numberOfBlinks=0;
+		  remainingBlinks=0;
      }
 
 		if (!locked && closed && (GPT_CheckTimeIsElapsed()))  // Anti theft mode
@@ -88,12 +90,12 @@ int main() {
 					ambLightDuration=-1;
 				}
 
-		 if (numberOfBlinks>0 && (GPT_GetElapsedTime()==nextBlinkTime))    // Blinking
+		 if (remainingBlinks>0 && (GPT_GetElapsedTime()==nextBlinkTime))    // Blinking
 				{
 					GPIO_WritePinValue(hazard_Led,!(hazardLedState));        // Toggle light
 					hazardLedState=!(hazardLedState);      // Toggle hazard light state
 					nextBlinkTime+=500;                   // update next blink time
-					numberOfBlinks--;                     // update number of remaining blinks
+					remainingBlinks--;                     // update number of remaining blinks
 				 }
 
 		    previous_state=current_state;
@@ -108,7 +110,7 @@ int main() {
 void blinks_init(int blinks){
     GPIO_WritePinValue(hazard_Led,1);     // Hazard light ON
     nextBlinkTime=500;
-    numberOfBlinks= blinks-1;
+    remainingBlinks= blinks-1;
     hazardLedState=1;
 }
 
